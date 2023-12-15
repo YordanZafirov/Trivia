@@ -13,7 +13,7 @@ import {
 const worker = new Worker("worker.js", { type: "module" });
 
 // Main Selectors
-const question = document.querySelector<HTMLDivElement>(".question");
+const question = document.querySelector<HTMLDivElement>(".question"); // BRAVO for using <T>
 const category = document.querySelector<HTMLDivElement>(".category");
 const answerBtn = document.querySelector<HTMLButtonElement>(".check-answer");
 const playAgainBtn = document.querySelector<HTMLButtonElement>(".play-again");
@@ -46,35 +46,29 @@ const getItem = (
     | "currentQuestionIndex"
     | "questions"
     | "cats"
-    | "askedCount"
+    | "askedCount" // I like this
 ) => {
+  const data = localStorage.getItem(key);
   switch (key) {
     case "questionCount": {
-      const data = localStorage.getItem(key);
       return parseInt(data || "0");
     }
     case "wrongAnswers": {
-      const data = localStorage.getItem(key);
       return parseInt(data || "0");
     }
     case "correctAnswers": {
-      const data = localStorage.getItem(key);
       return parseInt(data || "0");
     }
     case "currentQuestionIndex": {
-      const data = localStorage.getItem(key);
       return parseInt(data || "0");
     }
     case "questions": {
-      const data = localStorage.getItem(key);
       return data ? JSON.parse(data) : [];
     }
     case "cats": {
-      const data = localStorage.getItem(key);
       return data ? JSON.parse(data) : [];
     }
     case "askedCount": {
-      const data = localStorage.getItem(key);
       return parseInt(data || "0");
     }
     default: {
@@ -260,6 +254,7 @@ const showQuestions = (data: Questions, catData: CatData) => {
     li.innerHTML = answer;
     options?.appendChild(li);
   });
+
   showCat(catData);
   selectOption();
 };
@@ -290,7 +285,7 @@ const checkAnswer = () => {
     ?.getAttribute("data-id");
   console.log(questionId);
   const question = getItem("questions").find(
-    (question: Questions) => question.id === questionId
+    ({id}: Questions) => id === questionId // TIP: cleaner code
   );
   console.log(question);
 
@@ -308,6 +303,7 @@ const checkAnswer = () => {
       results.innerHTML = `<p>Wrong Answer. Correct Answer: ${correctAnswer}</p>`;
       wrong++;
     }
+
     checkCount();
   } else {
     results.innerHTML = `<p>Please select an answer</p>`;
@@ -405,6 +401,7 @@ const showQuestionsIfExist = () => {
 };
 
 showQuestionsIfExist();
+// https://stackoverflow.com/questions/7498361/defining-and-calling-function-in-one-step
 
 downloadResults?.addEventListener("click", () => {
   console.log("clicked");
@@ -422,3 +419,5 @@ downloadResults?.addEventListener("click", () => {
   };
   worker.postMessage({ correctScore, wrongAnswers, questionCount });
 });
+
+// Suggestion: declare functions added as Listeners separately and pass them as parameters
